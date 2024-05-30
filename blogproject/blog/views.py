@@ -70,7 +70,12 @@ def createblog(request):
             else:
                 messages.error(request, "Title and description should not be empty")
         return render(request, 'createblog.html') 
+    
+
 @login_required
+def blog_details(request):
+    pass
+
 @login_required
 def logout_user(request):
     if request.user.is_authenticated:
