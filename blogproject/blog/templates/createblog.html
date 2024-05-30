@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>create Blog</title>
+</head>
+<body>
+    <h3>welcome to BlogSpot</h3>
+    <h4>Fill the required fields to create blog</h4>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        <label for="Title">Title</label><br>
+        <input type="text" placeholder="Enter title of you blog" name="title">
+        <br><br>
+
+        <label for="description"> Description</label>
+        <input type="text" name="description">
+        <br><br>
+        
+        <label for="images">Blog related images</label>
+        <input type="file" name="img" accept="images/">
+
+        <br><br>
+        <input type="submit" id="" value="Post">
+    </form>
+</body>
+</html>
