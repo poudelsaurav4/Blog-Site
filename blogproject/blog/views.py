@@ -10,9 +10,8 @@ from django.db import IntegrityError
 # Create your views here.
 
 def index(request):
-    blogs = Createblog.objects.filter(blog_type= 'S')
-    paginator = Paginator(blogs, 10) 
-
+    blogs = Createblog.objects.filter(blog_type= 'S')[::-1]
+    paginator = Paginator(blogs, 3) 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -20,30 +19,55 @@ def index(request):
     return render(request, 'index.html', {"blogs":blogs, "page_obj":page_obj,})
 
 def user_login(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        try:
-            user = authenticate(request, email=email, password=password)
+    # if request.method == 'POST':
+    #     email_or_uname = request.POST.get('email_or_uname')
+    #     password = request.POST['password']
+    #     try:
+    #         user = authenticate(request, email=email_or_uname, password=password)
+    #         if user is not None:
+    #             login(request, user)
+    #             # print("Login successful, redirecting to home")
+    #             return redirect('index')
+    #         else:
+    #             messages.error(request, "Invalid email or password")
+    #             # print("Invalid email or password")
+    #     except Bloguser.DoesNotExist:
+    #         messages.error(request, "User with this email does not exist")
+    #         # print("User with this email does not exist")
+    # return render(request, 'login.html')
+
+        if request.method == 'POST':
+            login_input = request.POST.get('login_input')
+            password = request.POST.get('password')
+
+            user = None
+            if "@" in login_input:
+                try:
+                    user_obj = Bloguser.objects.get(email=login_input)
+                    user = authenticate(request, username=user_obj.username, password=password)
+                except Bloguser.DoesNotExist:
+                    messages.error(request, 'User with this email does not exist.')
+            else:
+                try:
+                    user_obj = Bloguser.objects.get(username=login_input)
+                    user = authenticate(request, username=user_obj.username, password=password)
+                except Bloguser.DoesNotExist:
+                    messages.error(request, 'User with this username does not exist.')
+
             if user is not None:
                 login(request, user)
-                # print("Login successful, redirecting to home")
                 return redirect('index')
             else:
-                messages.error(request, "Invalid email or password")
-                # print("Invalid email or password")
-        except Bloguser.DoesNotExist:
-            messages.error(request, "User with this email does not exist")
-            # print("User with this email does not exist")
-    return render(request, 'login.html')
+                messages.error(request, 'Invalid login credentials. Please try again.')
 
+        return render(request, 'login.html')
 
 def user_register(request):
 
     if request.method =='POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        username = request.POST['username']
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        username = request.POST.get('username')
         firstname = request.POST['first name']
         lastname = request.POST['last name']
         confirm_password = request.POST.get('confirm password')
@@ -58,7 +82,7 @@ def user_register(request):
             elif Bloguser.objects.filter(email=email).exists():
                 messages.error(request, "Email already registered")
             else:
-                Bloguser.objects.create_user(email, password, username= username, firstname = firstname, lastname= lastname, gender= gender, address = address)
+                Bloguser.objects.create_user(email, username,password, firstname = firstname, lastname= lastname, gender= gender, address = address)
                 messages.success(request, "Account created successfully")
                 print("-----hello created")
                 return redirect('login')
@@ -105,7 +129,11 @@ def search_title(request):
 def private_blog(request):
     user = request.user
     blogs = Createblog.objects.filter(user=user).filter(blog_type = 'P')
-    return render(request, 'private.html', {'blogs': blogs})
+    paginator = Paginator(blogs,5) 
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'private.html', {'blogs': blogs, 'page_obj':page_obj})
 @login_required
 def my_blogs(request):
     user = request.user

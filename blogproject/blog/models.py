@@ -26,8 +26,8 @@ class Bloguser(AbstractBaseUser, PermissionsMixin):
 
     objects = BloguserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
     
     def __str__(self) -> str:
         return self.username

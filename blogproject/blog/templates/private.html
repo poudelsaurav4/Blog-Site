@@ -89,8 +89,9 @@
                 <h5>{{user}} create private blogs to view here</h5>
              </div>
              {%else%}
-            {% for blog in blogs %}
-            <div class="col-md-4 mb-4">
+            <div class="row">
+             {% for blog in blogs %}
+            <div class="col-md-4 mb-4 ">
                 <div class="card">
                     {% if blog.blog_img %}
                     <img src="{{ blog.blog_img.url }}" class="card-img-top" alt="{{ blog.title }}">
@@ -109,7 +110,24 @@
             </div>
             {% endfor %}
         </div>
+
         {%endif%}
+        </div>
+        <div class="pagination d-flex justify-content-center">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-primary">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-primary">previous</a>
+                {% endif %}
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-primary">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 
 </body>
