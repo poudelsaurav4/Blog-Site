@@ -101,6 +101,8 @@
                         <a href="{% url 'details' blog.pk %}" class="btn btn-primary">Read More</a>
                         {% if blog.user == user %}
                         <a href="{% url 'edit' blog.pk %}" class="btn btn-warning">Edit</a>
+                        <a href="{% url 'delete' blog.pk %}" class="btn btn-warning bg-danger">Delete</a>
+
                         {% endif %}
                     </div>
                 </div>
