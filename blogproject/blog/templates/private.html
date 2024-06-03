@@ -3,10 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Blog</title>
+    <title>{{user|title }} Blog</title>
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        .containerr {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin:  auto;
+            text-align: center;
+        }
+        h3 {
+            color: #495057;
+            margin-bottom: 20px;
+        }
+        h4 {
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+        .highlight {
+            color: #6c757d;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -51,40 +78,37 @@
              </ul>
          </div>
      </nav>
-
+     <div class="containerr">
+        <h3>{{ user|title }}'s,<span class="highlight">Private Blog</span></h3>
+        <!-- <h4>Fill the required fields to create a blog</h4> -->
+      </div>
     <div class="container mt-4">
-        <div class="card">
-            <div class="card-body">
-                <h2>Edit Blog</h2>
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Title:</label>
-                        <input type="text" class="form-control" id="title" name="title" value="{{ blog_edit.title }}">
+        <div class="row">
+            <div class="container">
+                {% if not blogs %}
+                <h5>{{user}} create private blogs to view here</h5>
+             </div>
+             {%else%}
+            {% for blog in blogs %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    {% if blog.blog_img %}
+                    <img src="{{ blog.blog_img.url }}" class="card-img-top" alt="{{ blog.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ blog.title }}</h5>
+                        <p class="card-text">{{ blog.description|truncatewords:15 }}</p>
+                        <a href="{% url 'details' blog.pk %}" class="btn btn-primary">Read More</a>
+                        {% if blog.user == user %}
+                        <a href="{% url 'edit' blog.pk %}" class="btn btn-warning">Edit</a>
+                        {% endif %}
                     </div>
-                    <div class="mb-3">
-                        <label for="content" class="form-label">update description:</label>
-                        <textarea class="form-control" id="content" name="description">{{ blog_edit.description }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="image" class="form-label">Update Image:</label>
-                        <input type="file" class="form-control" id="image" name="img">
-                    </div>
-                    <div class="mb-3">
-                        <label for="content" class="form-label">Update Your blog type</label>
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="type"  value="P">
-                          <label class="form-check-label" for="private">Private</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="type"  value="S" >
-                        <label class="form-check-label" for="public">Public</label>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </form>
+                </div>
             </div>
+            {% endfor %}
         </div>
+        {%endif%}
     </div>
+
 </body>
 </html>

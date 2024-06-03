@@ -7,9 +7,50 @@
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+    <style>
+        body {
+            background-color: #e9ecef;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        nav {
+            background-color: #e9ecef;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+     
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .welcome-text {
+            color: #495057;
+        }
+        .btn-custom {
+            width: 150px;
+            margin: 10px auto;
+        }
+        .btn-login {
+            background-color: #6c757d;
+            color: #ffffff;
+        }
+        .btn-register {
+            background-color: #adb5bd;
+            color: #ffffff;
+        }
+        .info-text {
+            font-size: 1.1rem;
+            margin: 20px 0;
+            color: #495057;
+        }
+        .highlight {
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+       <div class="container">
         <a class="navbar-brand" href="{% url 'index' %}">BlogSpot</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -24,18 +65,26 @@
                     <a class="nav-link" href="{% url 'myblog' %}">My Blogs</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'newblog' %}">Create Blog</a>
+                    <a class="nav-link" href="{% url 'privateblog' %}">private Blog</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    <a class="nav-link" href="{% url 'newblog' %}">Create Blog</a>
                 </li>
-                <form method="POST" action="{% url 'individual' %}" class="form-inline my-2 my-lg-0">
+<!--                 
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li> -->
+            </div>
+                <form method="POST" action="{% url 'individual' %}" class="form-inline d-flex my-2 my-lg-0">
                     {% csrf_token %}
                     <input class="form-control mr-sm-2" type="search" name="search_item" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success my-2 my-sm-0" style="display: inline-block; margin-top: 8px;"  type="submit">Search</button>
                 </form>
+                <li class="nav-item navbar-nav mr-auto">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
                 {% else %}
-                <li class="nav-item">
+                <li class="nav-item navbar-nav mr-auto">
                     <a class="nav-link" href="{% url 'login' %}">Login</a>
                 </li>
                 {% endif %}
@@ -88,6 +137,18 @@
         </span>
     </div>
     {% endif %}
-
+    {% if not user.is_authenticated %}
+        <div class="container text-center mt-5">
+            <h5 class="welcome-text">Hello, welcome to Blogspot!</h5>
+            <p class="info-text">Discover, read, and share amazing blogs from various authors. <span class="highlight">Login</span> to access the latest content and stay updated with new posts.</p>
+            <button class="btn btn-outline-success btn-custom">
+                <a class="nav-link" href="{% url 'login' %}" style="text-decoration: none; color: inherit;">Login</a>
+            </button>
+            <p class="info-text">New to our site? <span class="highlight">Join us</span> today and become a part of our community!</p>
+            <button class="btn btn-outline-success btn-custom">
+                <a class="nav-link" href="{% url 'register' %}" style="text-decoration: none; color: inherit;">Register</a>
+            </button>
+        </div>
+    {% endif %}
 </body>
 </html>

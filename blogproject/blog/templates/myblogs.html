@@ -3,40 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ user|title }} Blog</title>
+    <title>{{user|title }} Blog</title>
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'index' %}">BlogSpot</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'index' %}">Home</a>
-                </li>
-                {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">My Blogs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'newblog' %}">Create Blog</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Login</a>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
+        <div class="container">
+         <a class="navbar-brand" href="{% url 'index' %}">BlogSpot</a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+             <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+             <ul class="navbar-nav mr-auto">
+                 <li class="nav-item active">
+                     <a class="nav-link" href="{% url 'index' %}">Home</a>
+                 </li>
+                 {% if user.is_authenticated %}
+                 <li class="nav-item">
+                     <a class="nav-link" href="{% url 'myblog' %}">My Blogs</a>
+                 </li>
+                 <li class="nav-item">
+                     <a class="nav-link" href="{% url 'privateblog' %}">private Blog</a>
+                 </li>
+                 <li class="nav-item">
+                     <a class="nav-link" href="{% url 'newblog' %}">Create Blog</a>
+                 </li>
+ <!--                 
+                 <li class="nav-item">
+                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                 </li> -->
+             </div>
+                 <form method="POST" action="{% url 'individual' %}" class="form-inline d-flex my-2 my-lg-0">
+                     {% csrf_token %}
+                     <input class="form-control mr-sm-2" type="search" name="search_item" placeholder="Search" aria-label="Search">
+                     <button class="btn btn-outline-success my-2 my-sm-0" style="display: inline-block; margin-top: 8px;"  type="submit">Search</button>
+                 </form>
+                 <li class="nav-item navbar-nav mr-auto">
+                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                 </li>
+                 {% else %}
+                 <li class="nav-item navbar-nav mr-auto">
+                     <a class="nav-link" href="{% url 'login' %}">Login</a>
+                 </li>
+                 {% endif %}
+             </ul>
+         </div>
+     </nav>
     <!-- {% for blog in blogs%}
     <div class="container mt-4">
         

@@ -12,12 +12,14 @@ class Bloguser(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=255)
     address = models.CharField(max_length=255, blank=True)
     GENDER_CHOICES = (
-        ('M', 'Hale'),
+        ('M', 'Male'),
         ('F', 'Female'),
         ('O', 'other'),
     )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 
+    
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES)
+    
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateField(default= timezone.now)
@@ -37,7 +39,11 @@ class Createblog(models.Model):
     blog_img = models.ImageField(upload_to='media/', blank=True)
     published_on = models.DateField(default= timezone.now)
     edited_on = models.DateField(default=timezone.now)
-
+    BLOG_CHOICES = (
+        ('P', 'Private'),
+        ('S', 'Public'),
+    )
+    blog_type = models.CharField(max_length=20, default= "S", choices=BLOG_CHOICES)
 
 
     def __str__(self) -> str:

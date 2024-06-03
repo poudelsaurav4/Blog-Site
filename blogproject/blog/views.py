@@ -10,7 +10,7 @@ from django.db import IntegrityError
 # Create your views here.
 
 def index(request):
-    blogs = Createblog.objects.order_by('published_on')[::-1]
+    blogs = Createblog.objects.filter(blog_type= 'S')
     paginator = Paginator(blogs, 10) 
 
     page_number = request.GET.get("page")
@@ -49,6 +49,7 @@ def user_register(request):
         confirm_password = request.POST.get('confirm password')
         address = request.POST['address']
         gender = request.POST.get('gender')
+        # print(gender)
         if password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
@@ -73,9 +74,9 @@ def createblog(request):
             title = request.POST.get('title')
             description = request.POST.get('description')
             images = request.FILES.get('img')    
-
+            blog_type = request.POST.get('type')
             if title and description:
-                Createblog.objects.create(user = request.user, title=title, description= description, blog_img= images)
+                Createblog.objects.create(user = request.user, title=title, description= description, blog_type = blog_type, blog_img= images)
                 messages.success(request, "Blog Created Successfully")
                 return redirect('index')          
             else:
@@ -100,7 +101,11 @@ def search_title(request):
                 return redirect('index')
     else:
         return redirect('index')
-
+@login_required
+def private_blog(request):
+    user = request.user
+    blogs = Createblog.objects.filter(user=user).filter(blog_type = 'P')
+    return render(request, 'private.html', {'blogs': blogs})
 @login_required
 def my_blogs(request):
     user = request.user
@@ -124,7 +129,7 @@ def edit_blog(request, pk):
         title = request.POST.get('title')
         description = request.POST.get('description')
         image = request.FILES.get('img')
-
+        blog_type = request.POST.get('type')
         # print(f"Title: {title}")
         # print(f"Description: {description}")
         # print(f"Image: {image}")
@@ -132,6 +137,7 @@ def edit_blog(request, pk):
         if title and description:
             blog_edit.title = title
             blog_edit.description = description
+            blog_edit.blog_type=blog_type
             if image:
                 blog_edit.blog_img = image
             try:
@@ -142,14 +148,20 @@ def edit_blog(request, pk):
 
     return render(request, 'edit.html', {'blog_edit': blog_edit})
 
+
+@login_required
+def delete_blog(request, pk):
+    blog_delete = get_object_or_404(Createblog, pk=pk)
+    blog_delete.delete()
+    messages.success(request, "Blog has successfully deleted")
+    return render(request, 'index.html')
+
 @login_required
 def logout_user(request):
 
-    if  not request.user:
-        return redirect('index')
-    elif request.user.is_authenticated:
-
+    # if  not request.user:
+    #     return redirect('index')
+    if request.user.is_authenticated:
         logout(request)
         messages.success(request, "You are successfully logged out")
-        return render(request, 'index.html')
-    
+        return render(request, 'login.html')
