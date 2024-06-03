@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ search.title }}</title>
+
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}    
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'index' %}">BlogSpot</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        {% if user.is_authenticated %}
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'index' %}">Home <span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">My Blogs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'newblog' %}">Create Blog</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            <form method="POST" action="{% url 'individual' %}" class="form-inline my-2 my-lg-0">
+              {% csrf_token %}
+              <input class="form-control mr-sm-2" type="search" name="search_item" placeholder="Search" aria-label="Search">
+              <input class="btn btn-outline-success my-2 my-sm-0" value="Search" type="submit">
+            </form>
+          </ul>
+        </div>
+        {% else %}
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+          </ul>
+        </div>
+        {% endif %}
+    </nav>
+
+    <!-- {% if search_results %} -->
+   
+    <div class="container mt-4">
+      {% if search_results %}
+      <h1 class="mb-4">Search Results</h1>
+      <div class="row">
+          {% for blog in search_results %}
+          <div class="col-md-4 mb-4">
+              <div class="card">
+                  <div class="card-body">
+                      <h5 class="card-title">{{ blog.title }}</h5>
+                      <p class="card-text">{{ blog.description|truncatewords:20 }}</p>
+                      <a href="{% url 'details' blog.id %}" class="btn btn-primary">Read More</a>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+      {% else %}
+      <div class="alert alert-warning" role="alert">
+          No blogs found with that title.
+      </div>
+      {% endif %}
+  </div>
+{% endif %}
+</body>
+</html>

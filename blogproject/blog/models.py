@@ -34,7 +34,7 @@ class Createblog(models.Model):
     user = models.ForeignKey(Bloguser, on_delete= models.CASCADE, related_name= 'user')
     title = models.TextField(max_length=256)
     description = models.TextField()
-    blog_img = models.ImageField(blank=True)
+    blog_img = models.ImageField(upload_to='media/', blank=True)
     published_on = models.DateField(default= timezone.now)
     edited_on = models.DateField(default=timezone.now)
 

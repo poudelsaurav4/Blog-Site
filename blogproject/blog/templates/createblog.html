@@ -4,12 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>create Blog</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
 </head>
 <body>
-    <h3>welcome to BlogSpot</h3>
-    <h4>Fill the required fields to create blog</h4>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{%url 'index'%}">BlogSpot</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        {% if user.is_authenticated %}
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{%url 'index' %}">Home <span class="sr-only"></span></a>
+            </li>
 
-    <form action="" method="POST">
+            
+            <li class="nav-item">
+              <a class="nav-link" href="#">My Blogs</a>
+            </li>
+
+
+            <li class="nav-item">
+                <a class="nav-link" href=" {%url 'newblog' %}">Create Blog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout'%}">logout</a>
+              </li>
+              <form method="POST" action="{%url 'individual'%}" class="form-inline my-2 my-lg-0">
+                {%csrf_token%}
+                <input class="form-control mr-sm-2" type="search" name="search_item" placeholder="Search" aria-label="Search">
+                <input class="btn btn-outline-success my-2 my-sm-0" value = "Search" type="submit">
+              </form>
+              {%else%}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'login'%}">Login</a>
+              </li>
+
+            {% endif %}
+          </ul>
+          
+        </div>
+      </nav>
+    
+    <h3>{{user}} welcome to BlogSpot</h3>
+    <h4>Fill the required fields to create blog</h4>
+<!-- 
+    <form action="{%url 'newblog'%}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <label for="Title">Title</label><br>
@@ -25,6 +68,30 @@
 
         <br><br>
         <input type="submit" id="" value="Post">
-    </form>
+    </form> -->
+
+    <div class="container mt-4">
+      <div class="card">
+          <div class="card-body">
+              <h2>Create Blog</h2>
+              <form method="POST" action="{%url 'newblog'%}" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                      <label for="title" class="form-label">Title:</label>
+                      <input type="text" class="form-control" id="title" name="title" value= "Enter Blog title">
+                  </div>
+                  <div class="mb-3">
+                      <label for="content" class="form-label">Description:</label>
+                      <textarea class="form-control" id="content" name="description"></textarea>
+                  </div>
+                  <div class="mb-3">
+                      <label for="image" class="form-label">Upload Image:</label>
+                      <input type="file" class="form-control" id="image" name="img">
+                  </div>
+                  <input type="submit" class="btn btn-primary" value="Post">
+              </form>
+          </div>
+      </div>
+  </div>
 </body>
-</html>
+</html>0
