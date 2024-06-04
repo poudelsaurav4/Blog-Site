@@ -25,20 +25,12 @@ def user_login(request):
         password = request.POST.get('password')
         user_obj = Bloguser.objects.filter(Q(email=login_input) | Q(username=login_input)).first()
         user = authenticate(request, username=user_obj, password=password)
-            # except Bloguser.DoesNotExist:
-            #     messages.error(request, 'User with this email or useer name does not exist.')
-        # else:
-        #     try:
-        #         user_obj = Bloguser.objects.get(username=login_input)
-        #         user = authenticate(request, username=user_obj.username, password=password)
-        #     except Bloguser.DoesNotExist:
-        #         messages.error(request, 'User with this username does not exist.')
 
         if user is not None:
             login(request, user)
             return redirect('index')
         else:
-            messages.error(request, 'Invalid login credentials. Please try again.')
+            messages.error(request, 'Invalid login details. Please try again.')
 
     return render(request, 'login.html')
 
@@ -53,7 +45,7 @@ def user_register(request):
         confirm_password = request.POST.get('confirm password')
         address = request.POST['address']
         gender = request.POST.get('gender')
-        # print(gender)
+
         if password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
@@ -64,14 +56,13 @@ def user_register(request):
             else:
                 Bloguser.objects.create_user(email, username,password, firstname = firstname, lastname= lastname, gender= gender, address = address)
                 messages.success(request, "Account created successfully")
-                print("-----hello created")
                 return redirect('login')
 
     return render(request, 'register.html')
 
 @login_required
 def createblog(request):
-    if  not request.user:
+    if  not request.user.is_authenticated:
         return redirect('index')
     elif request.user.is_authenticated:
         if request.method == 'POST':
@@ -89,7 +80,7 @@ def createblog(request):
 
 @login_required
 def search_title(request):
-    if  not request.user:
+    if  not request.user.is_authenticated:
         return redirect('index')
     elif request.method == 'POST':
         search_item = request.POST.get('search_item')
@@ -105,6 +96,7 @@ def search_title(request):
                 return redirect('index')
     else:
         return redirect('index')
+
 @login_required
 def private_blog(request):
     user = request.user
@@ -138,10 +130,7 @@ def edit_blog(request, pk):
         description = request.POST.get('description')
         image = request.FILES.get('img')
         blog_type = request.POST.get('type')
-        # print(f"Title: {title}")
-        # print(f"Description: {description}")
-        # print(f"Image: {image}")
-
+        
         if title and description:
             blog_edit.title = title
             blog_edit.description = description
@@ -166,9 +155,6 @@ def delete_blog(request, pk):
 
 @login_required
 def logout_user(request):
-
-    # if  not request.user:
-    #     return redirect('index')
     if request.user.is_authenticated:
         logout(request)
         messages.success(request, "You are successfully logged out")
