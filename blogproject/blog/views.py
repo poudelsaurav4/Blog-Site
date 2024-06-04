@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
+from django.db.models import Q
 # Create your views here.
 
 def index(request):
@@ -19,48 +20,27 @@ def index(request):
     return render(request, 'index.html', {"blogs":blogs, "page_obj":page_obj,})
 
 def user_login(request):
-    # if request.method == 'POST':
-    #     email_or_uname = request.POST.get('email_or_uname')
-    #     password = request.POST['password']
-    #     try:
-    #         user = authenticate(request, email=email_or_uname, password=password)
-    #         if user is not None:
-    #             login(request, user)
-    #             # print("Login successful, redirecting to home")
-    #             return redirect('index')
-    #         else:
-    #             messages.error(request, "Invalid email or password")
-    #             # print("Invalid email or password")
-    #     except Bloguser.DoesNotExist:
-    #         messages.error(request, "User with this email does not exist")
-    #         # print("User with this email does not exist")
-    # return render(request, 'login.html')
+    if request.method == 'POST':
+        login_input = request.POST.get('login_input')
+        password = request.POST.get('password')
+        user_obj = Bloguser.objects.filter(Q(email=login_input) | Q(username=login_input)).first()
+        user = authenticate(request, username=user_obj, password=password)
+            # except Bloguser.DoesNotExist:
+            #     messages.error(request, 'User with this email or useer name does not exist.')
+        # else:
+        #     try:
+        #         user_obj = Bloguser.objects.get(username=login_input)
+        #         user = authenticate(request, username=user_obj.username, password=password)
+        #     except Bloguser.DoesNotExist:
+        #         messages.error(request, 'User with this username does not exist.')
 
-        if request.method == 'POST':
-            login_input = request.POST.get('login_input')
-            password = request.POST.get('password')
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            messages.error(request, 'Invalid login credentials. Please try again.')
 
-            user = None
-            if "@" in login_input:
-                try:
-                    user_obj = Bloguser.objects.get(email=login_input)
-                    user = authenticate(request, username=user_obj.username, password=password)
-                except Bloguser.DoesNotExist:
-                    messages.error(request, 'User with this email does not exist.')
-            else:
-                try:
-                    user_obj = Bloguser.objects.get(username=login_input)
-                    user = authenticate(request, username=user_obj.username, password=password)
-                except Bloguser.DoesNotExist:
-                    messages.error(request, 'User with this username does not exist.')
-
-            if user is not None:
-                login(request, user)
-                return redirect('index')
-            else:
-                messages.error(request, 'Invalid login credentials. Please try again.')
-
-        return render(request, 'login.html')
+    return render(request, 'login.html')
 
 def user_register(request):
 
