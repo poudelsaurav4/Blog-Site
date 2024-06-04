@@ -106,11 +106,14 @@ def private_blog(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'private.html', {'blogs': blogs, 'page_obj':page_obj})
+
+
 @login_required
 def my_blogs(request):
     user = request.user
     blogs = Createblog.objects.filter(user=user)
     return render(request, 'myblogs.html', {'blogs': blogs})
+
 
 @login_required
 def blog_details(request, pk):
